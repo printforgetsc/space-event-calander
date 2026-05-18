@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Space Calendar 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080b12;
+  --surface: #0e1320;
+  --surface2: #141927;
+  --border: rgba(255,255,255,0.07);
+  --border-bright: rgba(255,255,255,0.15);
+  --text: #e8eaf0;
+  --text-muted: #6b7280;
+  --text-dim: #374151;
+  --accent: #c8b4ff;
+  --accent-dim: rgba(200,180,255,0.12);
+
+  --meteor: #60a5fa;
+  --meteor-bg: rgba(96,165,250,0.12);
+  --meteor-border: rgba(96,165,250,0.3);
+  --launch: #4ade80;
+  --launch-bg: rgba(74,222,128,0.1);
+  --launch-border: rgba(74,222,128,0.3);
+  --planet: #c084fc;
+  --planet-bg: rgba(192,132,252,0.1);
+  --planet-border: rgba(192,132,252,0.3);
+  --eclipse: #fb923c;
+  --eclipse-bg: rgba(251,146,60,0.1);
+  --eclipse-border: rgba(251,146,60,0.3);
+  --mission: #34d399;
+  --mission-bg: rgba(52,211,153,0.1);
+  --mission-border: rgba(52,211,153,0.3);
+  --special: #f472b6;
+  --special-bg: rgba(244,114,182,0.1);
+  --special-border: rgba(244,114,182,0.3);
+  --sky: #fbbf24;
+  --sky-bg: rgba(251,191,36,0.1);
+  --sky-border: rgba(251,191,36,0.3);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Star field */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 72% 8%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 43% 55%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 88% 35%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 5% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 60% 78%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 95% 65%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 30% 90%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 55% 42%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 22% 45%, rgba(200,180,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 78% 90%, rgba(200,180,255,0.4) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.header-left h1 {
+  font-family: 'Fraunces', serif;
+  font-size: 2.4rem;
+  font-weight: 300;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.header-left h1 em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.header-left p {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  align-items: center;
+}
+
+.leg {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.leg-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Nav */
+.cal-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.nav-btn {
+  background: var(--surface);
+  border: 0.5px solid var(--border-bright);
+  color: var(--text-muted);
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.nav-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+.month-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.6rem;
+  font-weight: 300;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  flex: 1;
+}
+
+.month-title span {
+  color: var(--text-muted);
+  font-size: 1rem;
+  margin-left: 6px;
+}
+
+.month-counter {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Calendar grid */
+.dow-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 2px;
+}
+
+.dow-cell {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  text-align: center;
+  padding: 0 0 6px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.day-cell {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 6px;
+  min-height: 90px;
+  padding: 7px 6px 5px;
+  position: relative;
+  transition: border-color 0.15s;
+  overflow: hidden;
+}
+
+.day-cell.empty {
+  background: transparent;
+  border-color: transparent;
+}
+
+.day-cell.has-event {
+  cursor: pointer;
+  border-color: var(--border-bright);
+}
+
+.day-cell.has-event:hover {
+  border-color: var(--accent);
+  background: var(--surface2);
+}
+
+.day-cell.today {
+  border-color: var(--accent) !important;
+}
+
+.day-cell.selected {
+  border-color: var(--accent) !important;
+  background: var(--accent-dim) !important;
+}
+
+.day-num {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-bottom: 5px;
+  line-height: 1;
+}
+
+.day-cell.has-event .day-num { color: var(--text); }
+
+.today .day-num {
+  color: var(--accent);
+}
+
+.evt-dot-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-bottom: 4px;
+}
+
+.evt-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.evt-label {
+  font-size: 0.6rem;
+  line-height: 1.35;
+  padding: 1px 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  margin-bottom: 2px;
+}
+
+.evt-label.star-event {
+  font-weight: 500;
+}
+
+.more-label {
+  font-size: 0.55rem;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+/* Detail panel */
+.detail-panel {
+  margin-top: 1.5rem;
+  background: var(--surface);
+  border: 0.5px solid var(--border-bright);
+  border-radius: 12px;
+  overflow: hidden;
+  animation: slideIn 0.18s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.detail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-bottom: 0.5px solid var(--border);
+  background: var(--surface2);
+}
+
+.detail-date-label {
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: color 0.1s;
+}
+
+.close-btn:hover { color: var(--text); }
+
+.detail-events { padding: 4px 0; }
+
+.detail-evt {
+  display: flex;
+  gap: 14px;
+  padding: 14px 18px;
+  border-bottom: 0.5px solid var(--border);
+  align-items: flex-start;
+}
+
+.detail-evt:last-child { border-bottom: none; }
+
+.de-stripe {
+  width: 3px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  align-self: stretch;
+  min-height: 20px;
+}
+
+.de-body { flex: 1; min-width: 0; }
+
+.de-name {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.3;
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+}
+
+.de-name .star { color: var(--accent); margin-left: 5px; font-size: 0.75rem; }
+
+.de-desc {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.de-tag {
+  display: inline-block;
+  font-size: 0.6rem;
+  padding: 2px 7px;
+  border-radius: 20px;
+  margin-top: 6px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-width: 0.5px;
+  border-style: solid;
+}
+
+/* Month summary bar */
+.month-bar {
+  display: flex;
+  gap: 8px;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.month-chip {
+  font-size: 0.65rem;
+  padding: 4px 11px;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.month-chip:hover, .month-chip.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header class="header">
+    <div class="header-left">
+      <h1>Space <em>Calendar</em></h1>
+      <p>May — December 2026 · Launches, showers &amp; missions</p>
+    </div>
+    <div class="legend">
+      <div class="leg"><div class="leg-dot" style="background:var(--meteor)"></div>Meteor</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--launch)"></div>Launch</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--planet)"></div>Planet</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--eclipse)"></div>Eclipse</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--mission)"></div>Mission</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--special)"></div>Special</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--sky)"></div>Skywatching</div>
+    </div>
+  </header>
+
+  <div class="month-bar" id="monthBar"></div>
+
+  <div style="margin-top:1.5rem">
+    <div class="cal-nav">
+      <button class="nav-btn" id="prevBtn" aria-label="Previous month">&#8592;</button>
+      <div class="month-title" id="monthTitle"></div>
+      <span class="month-counter" id="evtCount"></span>
+      <button class="nav-btn" id="nextBtn" aria-label="Next month">&#8594;</button>
+    </div>
+
+    <div class="dow-row">
+      <div class="dow-cell">Sun</div><div class="dow-cell">Mon</div><div class="dow-cell">Tue</div>
+      <div class="dow-cell">Wed</div><div class="dow-cell">Thu</div><div class="dow-cell">Fri</div><div class="dow-cell">Sat</div>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+    <div id="detailPanel"></div>
+  </div>
+</div>
+
+<script>
+const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const START = 4, END = 11;
+
+const TYPE = {
+  meteor:  { color: 'var(--meteor)',  bg: 'var(--meteor-bg)',  border: 'var(--meteor-border)',  label: 'Meteor shower' },
+  launch:  { color: 'var(--launch)',  bg: 'var(--launch-bg)',  border: 'var(--launch-border)',  label: 'Launch' },
+  planet:  { color: 'var(--planet)',  bg: 'var(--planet-bg)',  border: 'var(--planet-border)',  label: 'Planet / sky' },
+  eclipse: { color: 'var(--eclipse)', bg: 'var(--eclipse-bg)', border: 'var(--eclipse-border)', label: 'Eclipse' },
+  mission: { color: 'var(--mission)', bg: 'var(--mission-bg)', border: 'var(--mission-border)', label: 'Mission' },
+  special: { color: 'var(--special)', bg: 'var(--special-bg)', border: 'var(--special-border)', label: 'Special' },
+  skywatching: { color: 'var(--sky)', bg: 'var(--sky-bg)', border: 'var(--sky-border)', label: 'Skywatching' },
+};
+
+const EVENTS = [
+  {m:4,d:5,  name:'Eta Aquarids peak',          desc:'Up to 50 meteors/hr — Halley\'s Comet debris. Best viewed from the Southern Hemisphere before dawn.',type:'meteor',star:true},
+  {m:4,d:6,  name:'Eta Aquarids (cont.)',         desc:'Shower continues — pre-dawn viewing recommended from dark-sky sites.',type:'meteor'},
+  {m:4,d:18, name:'SpaceX CRS-34 docks ISS',      desc:'Dragon cargo spacecraft delivers ~6,500 lb of science experiments and crew supplies to the International Space Station.',type:'launch'},
+  {m:4,d:19, name:'Starship V3 debut',            desc:'First flight of SpaceX\'s advanced V3 Starship megarocket featuring new in-space capabilities never seen on a Starship mission.',type:'launch',star:true},
+  {m:4,d:31, name:'Blue Moon',                    desc:'Second full moon of May — a rare extra full moon making 2026 the year of 13 full moons. Not actually blue in color.',type:'planet'},
+
+  {m:5,d:5,  name:'Venus at greatest brilliancy', desc:'Venus reaches its highest point in the western evening sky — most brilliant view of the entire year at magnitude −4.5.',type:'planet',star:true},
+  {m:5,d:9,  name:'Venus–Jupiter conjunction',    desc:'Venus and Jupiter appear just 1.5° apart in the sky — a stunning naked-eye pairing visible after sunset.',type:'planet',star:true},
+  {m:5,d:17, name:'Moon occults Venus',            desc:'The Moon passes directly in front of Venus in broad daylight at ~3:45 PM EDT. Binoculars or a telescope required.',type:'skywatching'},
+  {m:5,d:21, name:'June solstice',                desc:'Shortest nights of the year in Northern Hemisphere. Longest nights begin in the Southern Hemisphere.',type:'planet'},
+  {m:5,d:29, name:'Full Strawberry Moon',          desc:'Traditional name for June\'s full moon — signals the ripening fruit season. Also known as the Rose Moon.',type:'planet'},
+  {m:5,d:30, name:'Asteroid Day',                 desc:'UN-sanctioned global awareness day on planetary defense, on the anniversary of the 1908 Tunguska Event.',type:'special'},
+
+  {m:6,d:14, name:'New Moon',                     desc:'Darkest skies of July — the best night of the month for observing faint galaxies and star clusters.',type:'planet'},
+  {m:6,d:25, name:'Hayabusa2 flies by Torifune',  desc:'JAXA\'s Hayabusa2 on its extended mission flies by near-Earth asteroid 98943 Torifune, studying planetary defense implications.',type:'mission',star:true},
+  {m:6,d:28, name:'S. Delta Aquarids peak',        desc:'Up to 25 meteors/hr from the Southern Delta Aquariid shower. Near-full Moon will wash out the fainter meteors.',type:'meteor'},
+  {m:6,d:29, name:'Alpha Capricornids peak',       desc:'Only ~5 meteors/hr but famous for producing slow, dramatic fireballs. Peaks same night as Delta Aquarids.',type:'meteor'},
+
+  {m:7,d:2,  name:'Comet 10P/Tempel 2',           desc:'Periodic comet reaches perihelion and brightens to about magnitude 8. Visible through binoculars in a dark sky.',type:'skywatching'},
+  {m:7,d:12, name:'Total solar eclipse',           desc:'Path of totality crosses Greenland, Iceland, and Spain — the first total eclipse visible in continental Europe since 1999.',type:'eclipse',star:true},
+  {m:7,d:12, name:'Perseids meteor shower peak',   desc:'100+ meteors per hour. 2026 has a New Moon coinciding with peak — near-perfect dark skies make this the year\'s best shower.',type:'meteor',star:true},
+  {m:7,d:15, name:'Venus at greatest elongation',  desc:'Venus reaches maximum angular separation from the Sun (45.9°) — the absolute best time to observe Venus all year.',type:'planet'},
+  {m:7,d:28, name:'Partial lunar eclipse',         desc:'Visible across North America, South America, and Europe. No special equipment needed — just step outside.',type:'eclipse'},
+
+  {m:8,d:10, name:'Moon passes near Saturn',       desc:'The Moon glides near Saturn and Antares — a colorful grouping that guides you through the summer constellations.',type:'planet'},
+  {m:8,d:15, name:'Nancy Grace Roman launch',      desc:'NASA launches its next great space observatory — a wide-field infrared telescope for cosmology and exoplanet discovery.',type:'launch',star:true},
+  {m:8,d:23, name:'September equinox',             desc:'Equal day and night worldwide. Start of astronomical autumn in the Northern Hemisphere and spring in the Southern.',type:'planet'},
+
+  {m:9,d:4,  name:'World Space Week begins',       desc:'The world\'s largest annual space event — UN-sanctioned celebration running Oct 4–10, with the theme "Living in Space".',type:'special'},
+  {m:9,d:8,  name:'Draconids shower',              desc:'Variable shower from comet 21P/Giacobini-Zinner. Best viewed in early evening when the radiant is highest.',type:'meteor'},
+  {m:9,d:12, name:'Mercury at elongation',         desc:'One of the best chances of the year to spot elusive Mercury low in the western sky after sunset.',type:'planet'},
+  {m:9,d:21, name:'Orionids peak',                 desc:'Up to 20 fast meteors/hr from Halley\'s Comet debris. The meteors appear to stream from the Orion constellation.',type:'meteor'},
+  {m:9,d:26, name:'Full Hunter\'s Moon',           desc:'Traditional autumn full moon used historically to light the way for evening hunts after the harvest.',type:'planet'},
+
+  {m:10,d:10, name:'Transit of Mercury',           desc:'Mercury crosses the Sun\'s disk — a rare event visible with proper solar filters as a tiny black dot. Won\'t recur for years.',type:'skywatching',star:true},
+  {m:10,d:15, name:'ESA Hera arrives at Didymos',  desc:'European Space Agency\'s Hera spacecraft arrives at the Didymos double asteroid system, previously struck by NASA\'s DART probe in 2022.',type:'mission',star:true},
+  {m:10,d:17, name:'Leonids shower',               desc:'Fast, bright meteors from comet Tempel-Tuttle. Occasional outbursts produce meteor storms of thousands per hour.',type:'meteor'},
+  {m:10,d:20, name:'ESCAPADE gravity assist',      desc:'NASA\'s twin ESCAPADE spacecraft perform an Earth flyby to slingshot toward Mars and begin their science mission.',type:'mission'},
+  {m:10,d:20, name:'Mercury elongation',           desc:'Year\'s final good window to spot Mercury low in the pre-dawn sky before it disappears into the glare.',type:'planet'},
+  {m:10,d:24, name:'Full Beaver Supermoon',        desc:'A supermoon — the Moon at its closest approach to Earth, appearing noticeably larger and brighter than average.',type:'planet'},
+  {m:10,d:25, name:'Uranus at opposition',         desc:'The ice giant at its closest to Earth and fully illuminated — brightest of the year, visible all night long.',type:'planet'},
+
+  {m:11,d:4,  name:'Full Cold Supermoon',          desc:'The third and final supermoon of 2026 — the biggest and brightest full moon of the December holiday season.',type:'planet'},
+  {m:11,d:7,  name:'Mercury elongation',           desc:'Final Mercury viewing opportunity of 2026 — look for it low in the pre-dawn eastern sky.',type:'planet'},
+  {m:11,d:13, name:'Geminids peak',                desc:'Up to 150 colorful fireballs per hour from asteroid 3200 Phaethon. The most reliable and prolific shower of any year.',type:'meteor',star:true},
+  {m:11,d:14, name:'Geminids (cont.)',              desc:'Shower continues with strong activity. The Geminids are unique — produced by an asteroid, not a comet.',type:'meteor'},
+  {m:11,d:21, name:'December solstice',            desc:'The longest night of the year in the Northern Hemisphere — ideal for extended stargazing marathon sessions.',type:'planet'},
+  {m:11,d:22, name:'Ursids shower',                desc:'Modest shower from comet 8P/Tuttle peaking on the longest nights of the year. Best in Northern Hemisphere.',type:'meteor'},
+  {m:11,d:24, name:'Solar Orbiter Venus flyby',    desc:'ESA\'s Solar Orbiter performs its 5th Venus flyby, tilting its heliocentric orbit from 17° to 24° inclination.',type:'mission'},
+  {m:11,d:28, name:'Blue Moon Pathfinder launch',  desc:'NASA and Blue Origin launch the first uncrewed Blue Moon Mark 1 lunar lander — a test mission for future crewed lunar landings.',type:'launch'},
+];
+
+let curM = 4;
+
+function getEventsFor(m, d) {
+  return EVENTS.filter(e => e.m === m && e.d === d);
+}
+
+function buildMonthBar() {
+  const bar = document.getElementById('monthBar');
+  bar.innerHTML = '';
+  for (let m = START; m <= END; m++) {
+    const chip = document.createElement('button');
+    chip.className = 'month-chip' + (m === curM ? ' active' : '');
+    chip.textContent = MONTHS_SHORT[m];
+    chip.addEventListener('click', () => { curM = m; renderAll(); });
+    bar.appendChild(chip);
+  }
+}
+
+function renderAll() {
+  buildMonthBar();
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const y = 2026;
+  const firstDay = new Date(y, curM, 1).getDay();
+  const daysInMonth = new Date(y, curM + 1, 0).getDate();
+  const today = new Date();
+  const isCurrentMonth = today.getFullYear() === y && today.getMonth() === curM;
+  const totalEvents = EVENTS.filter(e => e.m === curM).length;
+
+  document.getElementById('monthTitle').innerHTML =
+    `${MONTHS_FULL[curM]} <span>2026</span>`;
+  document.getElementById('evtCount').textContent =
+    `${totalEvents} event${totalEvents !== 1 ? 's' : ''}`;
+  document.getElementById('prevBtn').disabled = curM <= START;
+  document.getElementById('nextBtn').disabled = curM >= END;
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+
+  for (let i = 0; i < firstDay; i++) {
+    const el = document.createElement('div');
+    el.className = 'day-cell empty';
+    grid.appendChild(el);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const evts = getEventsFor(curM, d);
+    const el = document.createElement('div');
+    const isToday = isCurrentMonth && today.getDate() === d;
+    el.className = 'day-cell' + (evts.length ? ' has-event' : '') + (isToday ? ' today' : '');
+
+    const dn = document.createElement('div');
+    dn.className = 'day-num';
+    dn.textContent = d;
+    el.appendChild(dn);
+
+    if (evts.length) {
+      // Dot row
+      const dotRow = document.createElement('div');
+      dotRow.className = 'evt-dot-row';
+      evts.forEach(ev => {
+        const dot = document.createElement('div');
+        dot.className = 'evt-dot';
+        dot.style.background = TYPE[ev.type]?.color || 'var(--special)';
+        dotRow.appendChild(dot);
+      });
+      el.appendChild(dotRow);
+
+      // Pills (show first 2)
+      evts.slice(0, 2).forEach(ev => {
+        const pill = document.createElement('div');
+        pill.className = 'evt-label' + (ev.star ? ' star-event' : '');
+        pill.style.background = TYPE[ev.type]?.bg || 'var(--special-bg)';
+        pill.style.color = TYPE[ev.type]?.color || 'var(--special)';
+        pill.textContent = (ev.star ? '★ ' : '') + ev.name;
+        el.appendChild(pill);
+      });
+
+      if (evts.length > 2) {
+        const more = document.createElement('div');
+        more.className = 'more-label';
+        more.textContent = `+${evts.length - 2} more`;
+        el.appendChild(more);
+      }
+
+      el.addEventListener('click', () => showDetail(d, evts, el));
+    }
+
+    grid.appendChild(el);
+  }
+
+  document.getElementById('detailPanel').innerHTML = '';
+}
+
+function showDetail(d, evts, cell) {
+  document.querySelectorAll('.day-cell.selected').forEach(c => c.classList.remove('selected'));
+  cell.classList.add('selected');
+
+  const panel = document.getElementById('detailPanel');
+  const dateStr = `${MONTHS_FULL[curM]} ${d}, 2026`;
+
+  let html = `<div class="detail-panel">
+    <div class="detail-head">
+      <div class="detail-date-label">${dateStr} &mdash; ${evts.length} event${evts.length > 1 ? 's' : ''}</div>
+      <button class="close-btn" onclick="closeDetail()" aria-label="Close">&times;</button>
+    </div>
+    <div class="detail-events">`;
+
+  evts.forEach(ev => {
+    const t = TYPE[ev.type] || TYPE.special;
+    const tagLabel = ev.type === 'skywatching' ? 'Skywatching' : t.label;
+    html += `<div class="detail-evt">
+      <div class="de-stripe" style="background:${t.color}"></div>
+      <div class="de-body">
+        <div class="de-name">${ev.name}${ev.star ? '<span class="star">★ must-see</span>' : ''}</div>
+        <div class="de-desc">${ev.desc}</div>
+        <span class="de-tag" style="color:${t.color};background:${t.bg};border-color:${t.border}">${tagLabel}</span>
+      </div>
+    </div>`;
+  });
+
+  html += `</div></div>`;
+  panel.innerHTML = html;
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closeDetail() {
+  document.querySelectorAll('.day-cell.selected').forEach(c => c.classList.remove('selected'));
+  document.getElementById('detailPanel').innerHTML = '';
+}
+
+document.getElementById('prevBtn').addEventListener('click', () => {
+  if (curM > START) { curM--; renderAll(); }
+});
+document.getElementById('nextBtn').addEventListener('click', () => {
+  if (curM < END) { curM++; renderAll(); }
+});
+
+renderAll();
+</script>
+</body>
+</html>
